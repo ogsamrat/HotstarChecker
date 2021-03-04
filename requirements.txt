@@ -1,0 +1,4 @@
+pyrogram
+tgcrypto
+urllib3
+requests
