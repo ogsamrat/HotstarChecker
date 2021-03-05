@@ -2,7 +2,7 @@ import requests
 import json
 import sys
 
-from pyrogram import Client, filters
+from pyrogram import Client, filters, idle
 from pyrogram import __version__
 from pyrogram.types import Message
 import logging
@@ -71,7 +71,7 @@ async def checker(bot: HotstarChecker, message: Message):
 async def welcome(bot: HotstarChecker, message: Message):
     joiner = await bot.get_me() 
     user_id = [user.id for user in message.new_chat_members]
-    if int(joiner) == int(user_id):
+    if int(joiner.id) == int(user_id):
         await message.reply_text("I am made to work only in PMs, so I am leaving this chat... see ya!")  
         await bot.leave_chat(message.chat.id, delete=True)
         
@@ -88,3 +88,4 @@ async def help(_, message: Message):
 
 if __name__ == "__main__":
     HotstarChecker.start()    
+    idle()
