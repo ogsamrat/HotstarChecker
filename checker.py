@@ -24,11 +24,12 @@ logging.basicConfig(
     level=logging.DEBUG,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
-log = logging.getLogger(__name__).setLevel(logging.WARNING)
+log = logging.getLogger(__name__)
 log.info("--------------------------------------")
 log.info("|> Hotstar Checker Bot By @GodDrick <|")
 log.info("--------------------------------------")
 log.info("Pyro Version: " + __version__)
+log.setLevel(logging.WARNING)
 
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     log.error("Use a python version of 3.6+... quitting!")
