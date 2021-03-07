@@ -1,15 +1,20 @@
 import requests
 import json
 import sys
+import os
 
 from pyrogram import Client, filters, idle
 from pyrogram import __version__
 from pyrogram.types import Message
 import logging
 
-api_id = int("API ID")
-api_hash = "API HASH"
-token = "BOT TOKEN"
+try:
+    api_id = int(os.environ.get("APP_ID"))
+    api_hash = os.environ.get("APP_HASH")
+    token = os.environ.get("BOT_TOKEN")
+except:
+    print("Environment variables missing, i am quitting kthnxbye")
+    exit(1)
 
 # Env vars support soon....and will try to support multiple acc check after exams shit, kthnxbye
 
@@ -26,7 +31,7 @@ log.info("--------------------------------------")
 log.info("Pyro Version: " + __version__)
 
 if sys.version_info[0] < 3 or sys.version_info[1] < 6:
-    LOGGER.error("Use a python version of 3.6+... quitting!")
+    log.error("Use a python version of 3.6+... quitting!")
     quit(1)
     
     
