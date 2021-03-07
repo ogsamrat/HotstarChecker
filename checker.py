@@ -2,6 +2,7 @@ import requests
 import json
 import sys
 import os
+import asyncio
 
 from pyrogram import Client, filters, idle
 from pyrogram import __version__
@@ -21,7 +22,7 @@ except:
 HotstarChecker = Client("HotstarCheckerBot", api_id, api_hash, bot_token=token)
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
 )
 log = logging.getLogger(__name__)
@@ -38,11 +39,14 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     
 @HotstarChecker.on_message(filters.private & filters.text, group=1)
 async def checker(bot: HotstarChecker, message: Message):
+    if message.text.startswith("/") or message.text.startswith("!"):
+        return
+    omk = await message.reply(f"<b>{message.text}</b>\n\n<i>Checking.....</i>")    
     try:
-        omk = await message.reply(f"<b>{message.text}</b>\n\n<i>Checking.....</i>")
         fun = "."
         for l in range(5): # hehe fun, to look cool
             await omk.edit(f"<b>{message.text}</b>\n\n<i>Checking{fun}</i>")
+            await asyncio.sleep(1)
             fun = fun+"."
         msg = message.text
         email, password = msg.split(":")
@@ -61,15 +65,15 @@ async def checker(bot: HotstarChecker, message: Message):
         await message.reply(email+":"+password)
         r = requests.post(url, data=json.dumps(payload), headers=headers)
         if (r.status_code==200):
-            await message.reply(
+            await omk.edit(
                 f"<b>The Hotstar Account is Valid✅\n\n{message.text}</b>\n\nLogin Successful!\n\n<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
             )
         else:
-            await message.reply(
+            await omk.edit(
                 f"<b>The Hotstar Account is Invalid❌</b>\n\n{message.text}\n\nLogin Unsuccessful :(\n\n<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
             )
     except:
-        await message.reply("Something Went Wrong! Make sure you have put account in correct order, i.e, email:pass... retry again!")
+        await omk.edit("Something Went Wrong! Make sure you have put account in correct order, i.e, email:pass... retry again!")
         
         
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
