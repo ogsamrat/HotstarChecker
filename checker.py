@@ -74,7 +74,7 @@ async def checker(bot: HotstarChecker, message: Message):
                     else:
                         final += f"\n- `{account}`: Invalid ❌"   
                 except:
-                    final += f"\n- **{account}**: Invalid Format ❌"
+                    final += f"\n- `{account}`: Invalid Format ❌"
                     
             final  += f"\n\n**Checked by {message.from_user.mention}**\n__With ❤️ By @GodDrick__"        
             await omk.edit(final)
@@ -119,7 +119,7 @@ async def welcome(bot: HotstarChecker, message: Message):
        
 @HotstarChecker.on_message(filters.command("start"))
 async def start(_, message: Message):      
-    await message.reply("Hello, I am a simple hotstar checker bot created by @GodDrick! Type /help to get to know about my commands")
+    await message.reply("Hello, I am a simple hotstar checker bot created by @GodDrick! Type /help to get to know about my usages!")
     
     
 @HotstarChecker.on_message(filters.command("help"))
