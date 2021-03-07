@@ -1,0 +1,33 @@
+  
+{
+    "name": "Hotstar Checker Bot",
+    "description": "Checks hotstar account",
+    "keywords": [
+        "telegram",
+        "telethon",
+        "bot"
+    ],
+    "repository": "https://github.com/EmiliaDevs/HotstarChecker",
+    "env": {
+        "APP_HASH": {
+            "description": "You API HASH from my.telegram.org",
+            "required": true,
+            "value": ""
+        },
+        "APP_ID": {
+            "description": "You API ID from my.telegram.org",
+            "required": true,
+            "value": ""
+        },
+        "BOT_TOKEN": {
+            "description": "Bot token, get it from @BotFather.",
+            "required": true,
+            "value": ""
+        }
+    },
+    "buildpacks": [
+        {
+            "url": "heroku/python"
+        }
+    ]
+}
