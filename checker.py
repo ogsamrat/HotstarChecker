@@ -46,7 +46,7 @@ async def checker(bot: HotstarChecker, message: Message):
         fun = "."
         for l in range(5): # hehe fun, to look cool
             await omk.edit(f"<b>{message.text}</b>\n\n<i>Checking{fun}</i>")
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.2)
             fun = fun+"."
         msg = message.text
         email, password = msg.split(":")
