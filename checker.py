@@ -80,10 +80,10 @@ async def checker(bot: HotstarChecker, message: Message):
 @HotstarChecker.on_message(filters.new_chat_members)
 async def welcome(bot: HotstarChecker, message: Message):
     joiner = await bot.get_me() 
-    user_id = [user.id for user in message.new_chat_members]
-    if int(joiner.id) == int(user_id):
-        await message.reply_text("I am made to work only in PMs, so I am leaving this chat... see ya!")  
-        await bot.leave_chat(message.chat.id, delete=True)
+    for user in message.new_chat_members:
+        if int(joiner.id) == int(user.id):
+            await message.reply_text("I am made to work only in PMs, so I am leaving this chat... see ya!")  
+            await bot.leave_chat(message.chat.id, delete=True)
         
        
 @HotstarChecker.on_message(filters.command("start"))
