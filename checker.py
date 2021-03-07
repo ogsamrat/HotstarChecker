@@ -36,7 +36,7 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     quit(1)
     
     
-@HotstarChecker.on_message(filters.private & filters.text & (~filters.command))
+@HotstarChecker.on_message(filters.private & filters.text, group=1)
 async def checker(bot: HotstarChecker, message: Message):
     try:
         omk = await message.reply(f"<b>{message.text}</b>\n\n<i>Checking.....</i>")
