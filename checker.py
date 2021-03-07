@@ -73,7 +73,7 @@ async def checker(bot: HotstarChecker, message: Message):
         
         
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
-@HotstarChecker.on_message(filters.chat & filters.new_chat_members)
+@HotstarChecker.on_message(filters.new_chat_members)
 async def welcome(bot: HotstarChecker, message: Message):
     joiner = await bot.get_me() 
     user_id = [user.id for user in message.new_chat_members]
