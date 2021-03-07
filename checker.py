@@ -52,7 +52,7 @@ async def checker(bot: HotstarChecker, message: Message):
             combo_list = list(
                 {combo.strip() for combo in message.text.split("\n") if combo.strip()}
             )
-            final = "Accounts checked result:\n"            
+            final = "**--Accounts checked result:**--\n"            
             for account in combo_list:
                 try:
                     email, password = account.split(":")
@@ -70,9 +70,9 @@ async def checker(bot: HotstarChecker, message: Message):
                         }
                     r = requests.post(url, data=json.dumps(payload), headers=headers)
                     if r.status_code==200:
-                        final += f"\n- **{account}**: Valid ✅"                           
+                        final += f"\n- `{account}`: Valid ✅"                           
                     else:
-                        final += f"\n- **{account}**: Invalid ❌"   
+                        final += f"\n- `{account}`: Invalid ❌"   
                 except:
                     final += f"\n- **{account}**: Invalid Format ❌"
                     
@@ -104,7 +104,7 @@ async def checker(bot: HotstarChecker, message: Message):
                 f"<u><b>The Hotstar Account is Invalid❌</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`\n\n<b>Checked By: {message.from_user.mention}</b>\n__With love by @GodDrick ❤️__",
             )
     except:
-        await omk.edit("Something Went Wrong! Make sure you have put account in correct order, i.e, email:pass... retry again!")
+        await omk.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order, i.e, email:pass... retry again!__")
         
         
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
@@ -125,7 +125,7 @@ async def start(_, message: Message):
 @HotstarChecker.on_message(filters.command("help"))
 async def help(_, message: Message):      
     await message.reply("Just send me the email and password in the format email:pass and I will check it for you, thats it!"
-                        " If you want to check multiple accounts, use this format:\n`email1:pass1\nemail2:pass2\nemail3:pass3\nThat's it!`"
+                        " If you want to check multiple accounts, use this format:\n\n`email1:pass1\nemail2:pass2\nemail3:pass3`\nThat's it!"
                         " \n\n--Combolist file support soon!-- :)",
                        )    
     
