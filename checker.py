@@ -134,7 +134,7 @@ async def checker(bot: HotstarChecker, message: Message):
         await message.reply("Send the combolist in a .txt file...")
         return
     
-    if int(int(message.document.file_size)/1024) >= 400:
+    if int(int(message.document.file_size)/1024) >= 200:
         await message.reply("Bruhhhhh.... This file is toooooooo big!!!!!!!!!!!!!")
         return   
     
