@@ -92,7 +92,7 @@ async def checker(bot: HotstarChecker, message: Message):
                     await bot.send_document(
                         chat_id=message.chat.id,
                         document=output,
-                        filename="hotstar_result.txt",
+                        file_name="hotstar_result.txt",
                         caption=f"<b>Summary:</b>\n<b>Total Accs:</b> <code>{len(combo_list)}</code>\n<b>Hits:</b> <code>{hits}</code>\n<b>Bads:</b> <code>{bad}</code>\n\n<b>Checked by {message.from_user.mention}</b>\n<i>With ❤️ By @GodDrick</i>",
                     )
                 await omk.delete()    
@@ -125,7 +125,6 @@ async def checker(bot: HotstarChecker, message: Message):
             )
     except:
         await omk.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order, i.e, email:pass... retry again!__")
-        raise
         
         
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
