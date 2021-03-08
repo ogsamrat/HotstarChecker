@@ -117,7 +117,7 @@ async def checker(bot: HotstarChecker, message: Message):
         r = requests.post(url, data=json.dumps(payload), headers=headers)
         if (r.status_code==200):
             await omk.edit(
-                f"<u><b>The Hotstar Account is Valid✅</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`<b>Checked By: {message.from_user.mention}</b>\n__With love by @GodDrick ❤️__",
+                f"<u><b>The Hotstar Account is Valid✅</b></u>\n\n**Email:** `{email}`\n**Pass:** `{password}`\n\n<b>Checked By: {message.from_user.mention}</b>\n__With love by @GodDrick ❤️__",
             )
         else:
             await omk.edit(
@@ -125,6 +125,7 @@ async def checker(bot: HotstarChecker, message: Message):
             )
     except:
         await omk.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order, i.e, email:pass... retry again!__")
+        raise
         
         
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
