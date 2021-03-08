@@ -139,7 +139,7 @@ async def checker(bot: HotstarChecker, message: Message):
         return   
     
     owo = await message.reply("__Checking... this might take upto a few minutes...__")
-    combos = await bot.download(message, "./")
+    combos = await bot.download_media(message, "./")
     with open(combos) as f:    
         accs = f.read().splitlines()
         hits = 0
