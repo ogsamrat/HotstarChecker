@@ -9,7 +9,7 @@ from io import BytesIO
 from pyrogram import Client, filters, idle
 from pyrogram import __version__
 from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram.errors import UserNotParticipant
+from pyrogram.errors import UserNotParticipant, FloodWait, ChatAdminRequired
 from alive_progress import alive_bar # will try afterwards, idk its usage as of now
 import logging
 
@@ -17,8 +17,8 @@ try:
     api_id = int(os.environ.get("APP_ID"))
     api_hash = os.environ.get("APP_HASH")
     token = os.environ.get("BOT_TOKEN")
-    channel = os.environ.get("SUB_CHANNEL", "SpotifyGiveaways")    
-    c_url = os.environ.get("CHANNEL_URL", "https://t.me/SpotifyGiveaways")        
+    channel = os.environ.get("SUB_CHANNEL", "INDIANBINNER")    
+    c_url = os.environ.get("CHANNEL_URL", "https://t.me/INDIANBINNER")        
 except:
     print("Environment variables missing, i am quitting kthnxbye")
     exit(1)
@@ -48,9 +48,11 @@ async def check(user, message):
         await HotstarChecker.get_chat_member(channel, user)
         return True
     except UserNotParticipant:
-        await message.reply("**--❌ USER_NOT_PARTICIPANT ❌--**\n\n`In Order To Use Me, You Have To Join The Channel Given Below...`", 
+        await message.reply("**❌ --USER NOT PARTICIPANT-- ❌**\n\n`In Order To Use Me, You Have To Join The Channel Given Below...`", 
                             reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Channel", url=f"{c_url}")]]))
         return False
+    except ChatAdminRequired:
+        return True
     
 @HotstarChecker.on_message(filters.private & filters.text, group=1)
 async def checker(bot: HotstarChecker, message: Message):
@@ -207,9 +209,9 @@ async def checker(bot: HotstarChecker, message: Message):
                     bad += 1
                     b_accs += 1
                 try:    
-                    await owo.edit(f"__Checking...__\n\n**Checked:**{t_accs}/{len(accs)}\n**Hits: {h_accs}/{t_accs}**\n**Bads:** {b_accs}/{t_accs}")    
-                except:
-                    pass
+                    await owo.edit(f"__Checking...__\n\n**Checked:** `{t_accs}`\n**Hits:** `{h_accs}`\n**Bads:** `{b_accs}`")    
+                except FloodWait as e:
+                    await asyncio.sleep(e.x)
                 
             cleanr = re.compile("<.*?>")
             cleantext = re.sub(cleanr, "", hit_accs+"\n\n"+bad_accs)
@@ -223,7 +225,9 @@ async def checker(bot: HotstarChecker, message: Message):
                 )
             await owo.delete()  
             if os.path.exists(combos):
-                os.remove(combos)                
+                os.remove(combos)            
+        except FloodWait as e:
+            await asyncio.sleep(e.x)
         except:
             await owo.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order in the file, i.e, email:pass... retry again!__")
             raise
