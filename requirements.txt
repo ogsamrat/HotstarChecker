@@ -2,3 +2,4 @@ pyrogram
 tgcrypto
 urllib3
 requests
+alive-progress
