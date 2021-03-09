@@ -8,7 +8,8 @@ from io import BytesIO
 
 from pyrogram import Client, filters, idle
 from pyrogram import __version__
-from pyrogram.types import Message
+from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.errors import UserNotParticipant
 from alive_progress import alive_bar # will try afterwards, idk its usage as of now
 import logging
 
@@ -16,6 +17,8 @@ try:
     api_id = int(os.environ.get("APP_ID"))
     api_hash = os.environ.get("APP_HASH")
     token = os.environ.get("BOT_TOKEN")
+    channel = os.environ.get("SUB_CHANNEL", "SpotifyGiveaways")    
+    c_url = os.environ.get("CHANNEL_URL", "t.me/SpotifyGiveaways")        
 except:
     print("Environment variables missing, i am quitting kthnxbye")
     exit(1)
@@ -40,9 +43,21 @@ if sys.version_info[0] < 3 or sys.version_info[1] < 6:
     quit(1)
     
     
+async def check(user, message):
+    try:
+        await HotstarChecker.get_chat_member(channel, user)
+        return True
+    except UserNotParticipant:
+        await message.reply("**--❌ USER_NOT_PARTICIPANT ❌\n\n`In Order To Use Me, You Have To Join The Channel Given Below...`", 
+                            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Channel", str(c_url))]]))
+        return False
+    
 @HotstarChecker.on_message(filters.private & filters.text, group=1)
 async def checker(bot: HotstarChecker, message: Message):
     if message.text.startswith("/") or message.text.startswith("!"):
+        return
+    checker = await check(message.from_user.id, message)
+    if checker is False:
         return
     omk = await message.reply(f"<i>Checking.....</i>")    
     try:
@@ -130,6 +145,9 @@ async def checker(bot: HotstarChecker, message: Message):
         
 @HotstarChecker.on_message(filters.private & filters.document, group=1)
 async def checker(bot: HotstarChecker, message: Message):  
+    checker = await check(message.from_user.id, message)
+    if checker is False:
+        return    
     file_type = message.document.file_name.split(".")[-1]  
     if file_type != "txt":
         await message.reply("Send the combolist in a .txt file...")
@@ -146,6 +164,10 @@ async def checker(bot: HotstarChecker, message: Message):
         return await owo.edit(str(e))
     with open(combos) as f:    
         accs = f.read().splitlines()
+        if len(accs) > 5000:
+            if os.path.exists(combos):
+                os.remove(combos)                            
+            return await owo.edit("__Send a file with less than 5k combos, this one is quite big...__")
         hits = 0
         bad = 0
         hit_accs = "Hits Accounts:\n"
@@ -218,14 +240,20 @@ async def welcome(bot: HotstarChecker, message: Message):
        
 @HotstarChecker.on_message(filters.command("start"))
 async def start(_, message: Message):      
+    checker = await check(message.from_user.id, message)
+    if checker is False:
+        return    
     await message.reply("Hello, I am a simple hotstar checker bot created by @GodDrick! Type /help to get to know about my usages!")
     
     
 @HotstarChecker.on_message(filters.command("help"))
 async def help(_, message: Message):      
+    checker = await check(message.from_user.id, message)
+    if checker is False:
+        return    
     await message.reply("Just send me the email and password in the format email:pass and I will check it for you, thats it!"
                         " If you want to check multiple accounts, use this format:\n\n`email1:pass1\nemail2:pass2\nemail3:pass3`\nThat's it!"
-                        " \n\n--Combolist file support soon!-- :)",
+                        " \n\n--Or to check a combolist, send me a .txt file... Note: limit is 5k at once!-- :)",
                        )    
     
 
