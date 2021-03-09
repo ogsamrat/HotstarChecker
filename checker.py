@@ -49,7 +49,7 @@ async def check(user, message):
         return True
     except UserNotParticipant:
         await message.reply("**--❌ USER_NOT_PARTICIPANT ❌--**\n\n`In Order To Use Me, You Have To Join The Channel Given Below...`", 
-                            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Channel", url=f"c_url")]]))
+                            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Channel", url=f"{c_url}")]]))
         return False
     
 @HotstarChecker.on_message(filters.private & filters.text, group=1)
