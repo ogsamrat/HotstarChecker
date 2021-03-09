@@ -18,7 +18,7 @@ try:
     api_hash = os.environ.get("APP_HASH")
     token = os.environ.get("BOT_TOKEN")
     channel = os.environ.get("SUB_CHANNEL", "SpotifyGiveaways")    
-    c_url = os.environ.get("CHANNEL_URL", "t.me/SpotifyGiveaways")        
+    c_url = os.environ.get("CHANNEL_URL", "https://t.me/SpotifyGiveaways")        
 except:
     print("Environment variables missing, i am quitting kthnxbye")
     exit(1)
@@ -48,8 +48,8 @@ async def check(user, message):
         await HotstarChecker.get_chat_member(channel, user)
         return True
     except UserNotParticipant:
-        await message.reply("**--❌ USER_NOT_PARTICIPANT ❌\n\n`In Order To Use Me, You Have To Join The Channel Given Below...`", 
-                            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Channel", str(c_url))]]))
+        await message.reply("**--❌ USER_NOT_PARTICIPANT ❌--**\n\n`In Order To Use Me, You Have To Join The Channel Given Below...`", 
+                            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("Join Channel", url=f"c_url"))]]))
         return False
     
 @HotstarChecker.on_message(filters.private & filters.text, group=1)
