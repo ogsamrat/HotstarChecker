@@ -143,7 +143,7 @@ async def checker(bot: HotstarChecker, message: Message):
     try:
         combos = await bot.download_media(message, "./")
     except Exception as e:
-        return await omk.edit(str(e))
+        return await owo.edit(str(e))
     with open(combos) as f:    
         accs = f.read().splitlines()
         hits = 0
@@ -185,7 +185,7 @@ async def checker(bot: HotstarChecker, message: Message):
                     bad += 1
                     b_accs += 1
                 try:    
-                    await omk.edit(f"__Checking...__\n\n**Checked:**{t_accs}/{len(accs)}\n**Hits: {h_accs}/{t_accs}**\n**Bads:** {b_accs}/{t_accs}")    
+                    await owo.edit(f"__Checking...__\n\n**Checked:**{t_accs}/{len(accs)}\n**Hits: {h_accs}/{t_accs}**\n**Bads:** {b_accs}/{t_accs}")    
                 except:
                     pass
                 
